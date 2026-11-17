@@ -1,0 +1,100 @@
+
+
+generator client {
+    provider = "prisma-client"
+    output   = "../lib/generated/prisma"
+}
+
+
+datasource db {
+    provider = "postgresql"
+}
+
+
+// String           : Campo de texto obligatorio
+// String?          : Campo de texto opcional, admite null
+// @id              : Define la clave primaria
+// @default(uuid()) : Genera automáticamente un UUID
+// @unique          : No permite valores duplicados
+// @db.Text         : Utiliza el tipo TEXT de PostgreSQL
+// @default(false)  : Establece false como valor inicial
+// @default(now())  : Registra automáticamente la fecha y hora de creación
+// @updatedAt       : Actualiza la fecha al modificar el registro mediante Prisma
+
+
+// Modelo que almacena la información de los cursos
+model Course {
+    id                  String      @id @default(uuid())        // Identificador único del curso
+    userId              String                                  // ID del docente que creó el curso (Clerk)
+    title               String      @db.Text                    // Nombre o título del curso
+    slug                String      @db.Text @unique            // Identificador único para la URL del curso
+    description         String?     @db.Text                    // Descripción del curso (opcional)
+    imageUrl            String?     @db.Text                    // URL de la imagen de portada (opcional)
+    price               String?                                 // Precio del curso (opcional)
+    isPublished         Boolean     @default(false)             // Indica si el curso está publicado
+    level               String?     @db.Text                    // Nivel del curso: básico, intermedio, avanzado
+    category            String?     @db.Text                    // Categoría a la que pertenece el curso
+    chapters            Chapter[]                               // Capítulos pertenecientes al curso
+    purchases           Purchase[]                              // Compras realizadas para el curso
+    createdAt           DateTime    @default(now())             // Fecha de creación automática
+    updatedAt           DateTime    @updatedAt                  // Fecha de última actualización automática
+}
+
+
+// Modelo que almacena los capítulos pertenecientes a un curso
+model Chapter {
+    id                  String      @id @default(uuid())        // Identificador único del capítulo
+    title               String                                  // Título del capítulo
+    description         String?     @db.Text                    // Descripción del capítulo (opcional)
+    videoUrl            String      @db.Text                    // URL del video del capítulo
+    position            Int                                     // Orden del capítulo dentro del curso
+    isPublished         Boolean     @default(false)             // Indica si el capítulo está publicado
+    isFree              Boolean     @default(false)             // Indica si el capítulo es gratuito
+    courseId            String                                  // ID del curso al que pertenece
+    course              Course      @relation(fields: [courseId], references: [id], onDelete: Cascade)              // Relación con Course
+    userProgress        UserProgress[]                          // Progreso de los estudiantes en este capítulo
+    createdAt           DateTime    @default(now())             // Fecha de creación
+    updatedAt           DateTime    @updatedAt                  // Fecha de última actualización
+
+    @@index([courseId])                                         // Índice para optimizar búsquedas por curso
+}
+
+
+// Modelo que almacena el progreso de cada estudiante en los capítulos
+model UserProgress {
+    id                  String      @id @default(uuid())        // Identificador único del progreso
+    userId              String                                  // ID del estudiante (Clerk)
+    chapterId           String                                  // ID del capítulo asociado
+    chapter             Chapter     @relation(fields: [chapterId], references: [id], onDelete: Cascade)             // Relación con Chapter
+    isCompleted         Boolean     @default(false)             // Indica si el estudiante completó el capítulo
+    createdAt           DateTime    @default(now())             // Fecha de creación del progreso
+    updatedAt           DateTime    @updatedAt                  // Fecha de última actualización
+
+    @@unique([userId, chapterId])                               // Evita registros duplicados del mismo estudiante y capítulo
+    @@index([chapterId])                                        // Optimiza las búsquedas de progreso por capítulo
+}
+
+
+// Modelo que almacena las compras de cursos realizadas por los estudiantes
+model Purchase {
+    id                  String      @id @default(uuid())        // Identificador único de la compra
+    userId              String                                  // ID del estudiante que realizó la compra (Clerk)
+    courseId            String                                  // ID del curso adquirido
+    course              Course      @relation(fields: [courseId], references: [id], onDelete: Cascade)              // Relación con Course
+    price               Float                                   // Precio registrado al momento de la compra
+    createdAt           DateTime    @default(now())             // Fecha de creación de la compra
+    updatedAt           DateTime    @updatedAt                  // Fecha de última actualización
+
+    @@unique([userId, courseId])                                // Evita que un estudiante compre el mismo curso dos veces
+    @@index([courseId])                                         // Optimiza las búsquedas de compras por curso
+}
+
+
+// Modelo que relaciona a los usuarios de Clerk con sus clientes de Stripe
+model StripeCustomer {
+    id                  String      @id @default(uuid())        // Identificador único del registro
+    userId              String                                  // ID del usuario registrado en Clerk
+    stripeCustomerId    String                                  // ID del cliente generado por Stripe
+    createdAt           DateTime    @default(now())             // Fecha de creación del registro
+    updatedAt           DateTime    @updatedAt                  // Fecha de última actualización
+}

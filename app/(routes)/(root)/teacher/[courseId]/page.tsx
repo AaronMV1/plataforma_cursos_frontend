@@ -1,0 +1,49 @@
+
+
+import { auth } from "@clerk/nextjs/server";
+import prisma from "@/lib/prisma";
+import { CourseForm, HeaderCourse } from "./components";
+
+
+export default async function CoursePage({
+    params,
+}: {
+    params: Promise<{ courseId: string }>;
+}) {
+
+    const { courseId } = await params;
+    const { userId } = await auth();
+
+    // Verificar si el usuario está autenticado
+    if (!userId) {
+        return <p>No tienes permiso para ver este curso</p>
+    }
+
+    const course = await prisma.course.findUnique({
+        where: {
+            id: courseId,
+            userId: userId,
+        },
+        include: {
+            chapters: true
+        }
+    })
+
+    // Verificar si el curso existe y pertenece al usuario autenticado
+    if(!course) {
+        return <p>Este curso no existe</p>
+    }
+
+    return (
+
+        <div className="m-6">
+            <HeaderCourse idCourse={course.id} isPublished={course.isPublished} />
+            <CourseForm course={course} />
+            <p className="mt-4"> ID del Curso: <span className="font-bold ml-4">{courseId}</span></p>
+        </div>
+        
+
+    ) 
+        
+}
+
