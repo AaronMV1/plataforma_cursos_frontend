@@ -5,6 +5,7 @@ import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 const isPublicRoute = createRouteMatcher([      // Rutas publicas que no requieren autenticación
     "/",
     "/sign-in(.*)",
+    "/api/uploadthing(.*)"        // Ruta pública para la subida de imágenes, Uploadthing depende de esta ruta
 ])
 
 export default clerkMiddleware(async (auth, req) => {
