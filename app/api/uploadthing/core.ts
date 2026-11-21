@@ -8,17 +8,27 @@ const f = createUploadthing()
 
 export const ourFileRouter = {
 
-
     imageUploader: f({
         image: {
-            maxFileSize: "4MB",
             maxFileCount: 1,
+            maxFileSize: "4MB",
         },
     })
-
     .onUploadComplete(async ({ metadata }) => {
     
         return { uploadedBy: metadata }
+
+    }),
+
+    chapterVideo: f({
+        video: {
+            maxFileCount: 1,
+            maxFileSize: "512GB",
+        }
+    })
+    .onUploadComplete(( {file }) => {
+    
+        return { url: file.url }
 
     }),
 

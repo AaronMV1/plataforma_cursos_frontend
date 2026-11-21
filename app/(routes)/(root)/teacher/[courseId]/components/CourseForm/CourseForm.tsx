@@ -24,7 +24,7 @@ export function CourseForm(props: CourseFormProps ) {
 
     const { course } = props;
 
-     const form = useForm<z.infer<typeof formSchema>>({
+    const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             title: course.title || "",
@@ -69,9 +69,7 @@ export function CourseForm(props: CourseFormProps ) {
                         render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
 
-                                <FieldLabel htmlFor="courseName">
-                                    Nombre del Curso
-                                </FieldLabel>
+                                <FieldLabel htmlFor="courseName">Nombre del Curso</FieldLabel>
 
                                 <Input
                                     {...field}

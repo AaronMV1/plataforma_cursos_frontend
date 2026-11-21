@@ -22,7 +22,7 @@ export function CourseCard(props: CourseCardProps) {
                 <div className="flex flex-col lg:flex-row gap-4 items-start">
 
                     <Image
-                        src={imageUrl || "/portada_curso.png"}
+                        src={imageUrl || "/portada_nuevo_curso.png"}
                         alt="Curso"
                         width={150}
                         height={150}

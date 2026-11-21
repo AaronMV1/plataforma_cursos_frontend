@@ -1,8 +1,6 @@
 
 
 //  Esquema de validación para el formulario de creación de curso
-
-
 import { z } from "zod";
 
 

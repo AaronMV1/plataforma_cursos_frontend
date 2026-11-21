@@ -46,7 +46,7 @@ model Chapter {
     id                  String      @id @default(uuid())        // Identificador único del capítulo
     title               String                                  // Título del capítulo
     description         String?     @db.Text                    // Descripción del capítulo (opcional)
-    videoUrl            String      @db.Text                    // URL del video del capítulo
+    videoUrl            String?      @db.Text                   // URL del video del capítulo
     position            Int                                     // Orden del capítulo dentro del curso
     isPublished         Boolean     @default(false)             // Indica si el capítulo está publicado
     isFree              Boolean     @default(false)             // Indica si el capítulo es gratuito

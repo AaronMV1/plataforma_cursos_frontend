@@ -62,7 +62,7 @@ export function CourseImage(props: CourseImageProps) {
                 </div>
             ) : (
 
-                <Image src={ image || "/portada_curso.png"} alt="Imagen del Curso" className="w-full h-full rounded-md" width={500} height={250} />
+                <Image src={ image || "/portada_nuevo_curso.png"} alt="Imagen del Curso" className="w-full h-full rounded-md" width={500} height={250} />
 
             )}            
 

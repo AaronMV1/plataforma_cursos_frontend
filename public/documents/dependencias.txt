@@ -1,0 +1,4 @@
+
+
+npm i @hello-pangea/dnd
+npm i react-quill-new

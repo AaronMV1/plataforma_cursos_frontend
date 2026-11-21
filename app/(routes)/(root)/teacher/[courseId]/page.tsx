@@ -2,7 +2,7 @@
 
 import { auth } from "@clerk/nextjs/server";
 import prisma from "@/lib/prisma";
-import { CourseForm, CourseImage, CoursePrice, HeaderCourse } from "./components";
+import { ChaptersBlock, CourseForm, CourseImage, CoursePrice, HeaderCourse } from "./components";
 
 
 export default async function CoursePage({
@@ -25,7 +25,11 @@ export default async function CoursePage({
             userId: userId,
         },
         include: {
-            chapters: true
+            chapters: {
+                orderBy: {
+                    position: "asc"
+                }
+            }
         }
     })
 
@@ -41,8 +45,6 @@ export default async function CoursePage({
 
             <CourseForm course={course} />
 
-            <p className="mt-4"> ID del Curso: <span className="font-bold ml-4">{courseId}</span></p>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
 
                 <CourseImage idCourse={course.id} imageCourse={course.imageUrl} />
@@ -50,7 +52,9 @@ export default async function CoursePage({
                 
             </div>
 
-            <p>Course chapters</p>            
+            <ChaptersBlock idCourse={course.id} chapters={course.chapters} />        
+
+            <p className="mt-4"> ID del Curso: <span className="font-bold ml-4">{courseId}</span></p>
 
         </div>
         
